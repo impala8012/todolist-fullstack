@@ -1,82 +1,94 @@
 import React, { Fragment, useState } from "react";
+import Modal from "./Modal";
+import { ButtonStyle as Button } from "./ButtonStyle";
+import styled from "styled-components";
+
+const ModalWrapped = styled.div`
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  input {
+    outline: none;
+    width: 500px;
+    height: 25px;
+    margin: 0 5px;
+    border-radius: 5px;
+  }
+`;
+
+const ButtonContainer = styled.div`
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+`;
 
 const EditTodo = ({ todo }) => {
   const [description, setDescription] = useState(todo.description);
-  const handleChange = (e) => {
+  const [title, setTitle] = useState(todo.title);
+  const [displayModal, setDisplayModal] = useState(false);
+
+  const openModal = () => {
+    setDisplayModal(true);
+    console.log("I am triggered");
+    console.log("see my state", displayModal);
+  };
+  const hideModal = () => {
+    setDisplayModal(false);
+    setDescription(todo.description);
+    setTitle(todo.title);
+  };
+  const handleTitleChange = (e) => {
     setDescription(e.target.value);
   };
-  const handleEdit = async e => {
-      e.preventDefault()
-      try {
-        const body = {description}
-        const response = await fetch(`http://localhost:5000/todos/${todo.todo_id}`,{
-            method: "PUT",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(body)
-        })
-        window.location = "/"
-        
-      } catch (err) {
-          console.log(err.message)
-      }
-  }
-  const handleClick = () => {
-      setDescription(todo.description)
-  }
+
+  const handleDescriptionChange = (e) => {
+    setDescription(e.target.value);
+  };
+  const handleEdit = async (e) => {
+    e.preventDefault();
+    try {
+      const body = { description,title };
+      await fetch(`http://localhost:5000/todos/${todo.todo_id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      window.location = "/";
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+  // const handleClick = () => {
+  //   setDescription(todo.description);
+  // };
   return (
     <Fragment>
-      <button
-        type="button"
-        class="btn btn-info btn-lg"
-        data-toggle="modal"
-        data-target={`id${todo.todo_id}`}
-      >
-        Edit
-      </button>
-
-      <div
-        id={`id${todo.todo_id}`}
-        class="modal fade"
-        role="dialog"
-        onClick={handleClick}
-      >
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button
-                type="button"
-                class="close"
-                data-dismiss="modal"
-                onClick={handleClick}
-              >
-                &times;
-              </button>
-              <h4 class="modal-title">Edit Todo</h4>
-            </div>
-            <div class="modal-body">
-              <input type="text" value={description} onChange={handleChange} />
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-default"
-                data-dismiss="modal"
-                onClick={handleEdit}
-              >
-                Edit
-              </button>
-              <button
-                type="button"
-                class="btn btn-default"
-                data-dismiss="modal"
-                onClick={handleClick}
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Button onClick={openModal}>Edit</Button>
+      <Modal displayModal={displayModal}>
+        <ModalWrapped>
+          <h4>Edit Todo</h4>
+          <label htmlFor="title">Title</label>
+          <input
+            type="text"
+            name="title"
+            value={title}
+            onChange={handleTitleChange}
+          />
+          <label htmlFor="description">Description</label>
+          <input
+            type="text"
+            name="description"
+            value={description}
+            onChange={handleDescriptionChange}
+          />
+        </ModalWrapped>
+        <ButtonContainer>
+          <Button onClick={handleEdit}>Edit</Button>
+          <Button onClick={hideModal}>Close</Button>
+        </ButtonContainer>
+      </Modal>
     </Fragment>
   );
 };

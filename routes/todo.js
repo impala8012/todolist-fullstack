@@ -12,6 +12,7 @@ const pool = require("../db");
  *       required:
  *         - id
  *         - description
+ *         - title 
  *       properties:
  *         id:
  *           type: number
@@ -19,6 +20,9 @@ const pool = require("../db");
  *         description:
  *           type: string
  *           description: the todo list
+ *         title: 
+ *           type: string 
+ *           description: The todo Title
  *       example:
  *         id: 2
  *         description: walk the dogs
@@ -57,10 +61,10 @@ const pool = require("../db");
 // Create a todo
 router.post("/", async (req, res, next) => {
   try {
-    const { description } = req.body;
+    const { description, title } = req.body;
     const newTodo = await pool.query(
-      "INSERT INTO todo (description) VALUES($1) RETURNING *",
-      [description]
+      "INSERT INTO todo (description, title) VALUES($1,$2) RETURNING *",
+      [description, title]
     );
     res.status(201).json(newTodo.rows[0]);
   } catch (err) {
@@ -170,11 +174,12 @@ router.get("/:id", async (req, res, next) => {
 router.put("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { description } = req.body;
+    const { description, title } = req.body;
     console.log("description", description);
+    console.log("title", title);
     const updateTodo = await pool.query(
-      "UPDATE todo SET description = $1 WHERE todo_id = $2",
-      [description, id]
+      "UPDATE todo SET description = $1, title = $2 WHERE todo_id = $3",
+      [description, title, id]
     );
     res.status(204).send("Todo was updated");
   } catch (err) {
