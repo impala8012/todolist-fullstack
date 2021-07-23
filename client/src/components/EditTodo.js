@@ -40,7 +40,7 @@ const EditTodo = ({ todo }) => {
     setTitle(todo.title);
   };
   const handleTitleChange = (e) => {
-    setDescription(e.target.value);
+    setTitle(e.target.value);
   };
 
   const handleDescriptionChange = (e) => {

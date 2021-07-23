@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect } from "react";
 import EditTodo from "./EditTodo";
 import styled from "styled-components";
-import {ButtonStyle} from "./ButtonStyle"
+import { ButtonStyle } from "./ButtonStyle";
 const WrapContainer = styled.div`
   width: 1200px;
   display: flex;
@@ -17,6 +17,7 @@ const Item = styled.div`
   border: 1px solid #ccc;
   transform: translateY(0px);
   transition: 0.5s;
+  color: ${props => props.theme.fontColor}
 
   h2 {
     border-bottom: 1px solid #888;
@@ -34,7 +35,6 @@ const Item = styled.div`
   .text {
     padding: 30px;
     position: relative;
-
   }
 
   &:hover {
@@ -48,7 +48,6 @@ const Item = styled.div`
         border-right: 184 solid #feb85d;
       }
     }
-
     h2 {
       color: #fff;
       border-bottom-color: #fff;
@@ -60,6 +59,42 @@ const Item = styled.div`
   }
 `;
 
+const SearchContainer = styled.div`
+  width: 30%;
+  margin: auto;
+  padding: 1rem;
+
+  form {
+    display: flex;
+  }
+
+  input {
+    width: 100%;
+    border: 3px solid #00b4cc;
+    border-right: none;
+    padding: 5px;
+    height: 20px;
+    border-radius: 5px 0 0 5px;
+    outline: none;
+    color: #9dbfaf;
+  }
+  input:focus {
+    color: #00b4cc;
+  }
+
+  button {
+    width: 40px;
+    height: 36px;
+    border: 1px solid #00b4cc;
+    background: #00b4cc;
+    text-align: center;
+    color: #fff;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+    font-size: 20px;
+  }
+`;
+
 const Button = styled(ButtonStyle)`
   &:hover {
     color: green;
@@ -67,6 +102,8 @@ const Button = styled(ButtonStyle)`
 `;
 const ListTodo = () => {
   const [todos, setTodos] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
   const getTodos = async () => {
     try {
       const response = await fetch("http://localhost:5000/todos");
@@ -77,8 +114,12 @@ const ListTodo = () => {
     }
   };
 
+  useEffect(() => {
+    getTodos();
+  }, [searchTerm]);
+
   const handleDelete = async (id) => {
-    console.log("id",id)
+    console.log("id", id);
     try {
       await fetch(`http://localhost:5000/todos/${id}`, {
         method: "DELETE",
@@ -88,51 +129,58 @@ const ListTodo = () => {
       console.log(err.message);
     }
   };
-  useEffect(() => {
-    getTodos();
-  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(
+        `http://localhost:5000/todos?title=${searchTerm}`
+      );
+      const jsonData = await response.json();
+      setTodos(jsonData);
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
   return (
     <Fragment>
+      <SearchContainer>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search.."
+            value={searchTerm}
+          />
+          <button>
+            <i class="fa fa-search"></i>
+          </button>
+        </form>
+      </SearchContainer>
       <WrapContainer>
-        {todos.map((todo) => (
-          <Item key={todo.todo_id}>
-            <div className="text">
-              <h2>{todo.title}</h2>
-              <p>{todo.description}</p>
-              <EditTodo todo={todo}/>
-              <Button onClick={() => handleDelete(todo.todo_id)}>Delete</Button>
-            </div>
-          </Item>
-        ))}
-      </WrapContainer>
-
-      {/* <table>
-        <thead>
-          <tr>
-            <th>Description</th>
-            <th>Edit</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
-        <tbody>
-          {todos.map((todo) => (
-            <tr key={todo.todo_id}>
-              <td>{todo.description}</td>
-              <td>
+        {todos
+          .filter((todo) => {
+            if (searchTerm === "") {
+              return todo;
+            } else if (
+              todo.title.toLowerCase().includes(searchTerm.toLowerCase())
+            ) {
+              return todo;
+            }
+          })
+          .map((todo) => (
+            <Item key={todo.todo_id}>
+              <div className="text">
+                <h2>{todo.title}</h2>
+                <p>{todo.description}</p>
                 <EditTodo todo={todo} />
-              </td>
-              <td>
-                <button
-                  className="btn"
-                  onClick={() => handleDelete(todo.todo_id)}
-                >
+                <Button onClick={() => handleDelete(todo.todo_id)}>
                   Delete
-                </button>
-              </td>
-            </tr>
+                </Button>
+              </div>
+            </Item>
           ))}
-        </tbody>
-      </table> */}
+      </WrapContainer>
     </Fragment>
   );
 };

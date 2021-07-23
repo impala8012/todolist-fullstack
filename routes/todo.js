@@ -1,8 +1,6 @@
 const router = require("express").Router();
 const pool = require("../db");
 
-
-
 /**
  * @swagger
  * components:
@@ -12,7 +10,7 @@ const pool = require("../db");
  *       required:
  *         - id
  *         - description
- *         - title 
+ *         - title
  *       properties:
  *         id:
  *           type: number
@@ -20,8 +18,8 @@ const pool = require("../db");
  *         description:
  *           type: string
  *           description: the todo list
- *         title: 
- *           type: string 
+ *         title:
+ *           type: string
  *           description: The todo Title
  *       example:
  *         id: 2
@@ -41,20 +39,20 @@ const pool = require("../db");
  *      post:
  *          summary: Create a new todo
  *          tags: [Todos]
- *          requestBody: 
+ *          requestBody:
  *              required: true
- *              content: 
- *                  application/json: 
- *                      schema: 
+ *              content:
+ *                  application/json:
+ *                      schema:
  *                          $ref: '#/components/schemas/Todos'
  *          responses:
  *              201:
  *                  description: The todo was successfully created
- *                  content: 
- *                      application/json: 
- *                          schema: 
+ *                  content:
+ *                      application/json:
+ *                          schema:
  *                              $ref: '#/components/schemas/Todos'
- *              500: 
+ *              500:
  *                  description: Some server error
  */
 
@@ -78,25 +76,38 @@ router.post("/", async (req, res, next) => {
  *      get:
  *          summary: Get all todos
  *          tags: [Todos]
+ *          parameters:
+ *              - in: query
+ *                name: title
+ *                schema:
+ *                  type: string
+ *                description: The todo search Term
  *          responses:
  *              200:
  *                  description: The list of the todos
- *                  content: 
- *                      application/json: 
- *                          schema: 
+ *                  content:
+ *                      application/json:
+ *                          schema:
  *                              type: array
- *                              items: 
+ *                              items:
  *                                  $ref: '#/components/schemas/Todos'
- *              500: 
+ *              500:
  *                  description: Some server error
  */
-
 
 // Get all todos
 router.get("/", async (req, res, next) => {
   try {
-    const allTodos = await pool.query("SELECT * FROM todo");
-    res.status(200).json(allTodos.rows);
+    const { title } = req.query;
+    if (title) {
+      const todos = await pool.query("SELECT * FROM todo WHERE LOWER(title) LIKE LOWER($1)", [
+        `%${title}%`,
+      ]);
+      res.status(200).json(todos.rows);
+    } else {
+      const allTodos = await pool.query("SELECT * FROM todo");
+      res.status(200).json(allTodos.rows);
+    }
   } catch (err) {
     console.log(err.message);
   }
@@ -104,25 +115,25 @@ router.get("/", async (req, res, next) => {
 
 /**
  * @swagger
- *  /todos/{id}: 
+ *  /todos/{id}:
  *      get:
  *          summary: Get todo by id
  *          tags: [Todos]
- *          parameters: 
+ *          parameters:
  *              - in: path
  *                name: id
- *                schema: 
+ *                schema:
  *                  type: string
  *                required: true
  *                description: The todo id
  *          responses:
  *              200:
  *                  description: The todo by id
- *                  content: 
- *                      application/json: 
- *                          schema: 
+ *                  content:
+ *                      application/json:
+ *                          schema:
  *                              $ref: '#/components/schemas/Todos'
- *              404: 
+ *              404:
  *                  description: Todo was not found
  */
 // Get a todo
@@ -140,33 +151,33 @@ router.get("/:id", async (req, res, next) => {
 
 /**
  * @swagger
- *  /todos/{id}: 
+ *  /todos/{id}:
  *      put:
  *          summary: Update todo by id
  *          tags: [Todos]
- *          parameters: 
+ *          parameters:
  *              - in: path
  *                name: id
- *                schema: 
+ *                schema:
  *                  type: string
  *                required: true
  *                description: The todo id
- *          requestBody: 
+ *          requestBody:
  *              required: true
- *              content: 
- *                  application/json: 
- *                      schema: 
+ *              content:
+ *                  application/json:
+ *                      schema:
  *                          $ref: '#/components/schemas/Todos'
  *          responses:
- *              20$:
+ *              204:
  *                  description: The todo was updated
- *                  content: 
- *                      application/json: 
- *                          schema: 
+ *                  content:
+ *                      application/json:
+ *                          schema:
  *                              $ref: '#/components/schemas/Todos'
- *              404: 
+ *              404:
  *                  description: Todo was not found
- *              500: 
+ *              500:
  *                  description: Some error happened
  */
 
@@ -187,24 +198,23 @@ router.put("/:id", async (req, res, next) => {
   }
 });
 
-
 /**
  * @swagger
- *  /todos/{id}: 
+ *  /todos/{id}:
  *      delete:
  *          summary: Delete todo by id
  *          tags: [Todos]
- *          parameters: 
+ *          parameters:
  *              - in: path
  *                name: id
- *                schema: 
+ *                schema:
  *                  type: string
  *                required: true
  *                description: The todo id
  *          responses:
  *              204:
- *                  description: The todo was deleted 
- *              404: 
+ *                  description: The todo was deleted
+ *              404:
  *                  description: Todo was not found
  */
 // delete a todo

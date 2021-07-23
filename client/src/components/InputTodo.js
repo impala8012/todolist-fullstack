@@ -70,7 +70,6 @@ const InputTodo = () => {
           onChange={handleDescriptionChange}
         />
         <Button>Add</Button>
-        <hr />
       </Form>
     </InputTodoContainer>
   );
