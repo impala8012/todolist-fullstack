@@ -67,6 +67,7 @@ router.post("/", async (req, res, next) => {
     res.status(201).json(newTodo.rows[0]);
   } catch (err) {
     console.log(err.message);
+    res.status(500).send("Server Error");
   }
 });
 
@@ -110,6 +111,7 @@ router.get("/", async (req, res, next) => {
     }
   } catch (err) {
     console.log(err.message);
+    res.status(500).send("Server Error");
   }
 });
 
@@ -146,6 +148,7 @@ router.get("/:id", async (req, res, next) => {
     res.status(200).json(todo.rows);
   } catch (err) {
     console.log(err.message);
+    res.status(500).send("Server Error");
   }
 });
 
@@ -195,6 +198,7 @@ router.put("/:id", async (req, res, next) => {
     res.status(204).send("Todo was updated");
   } catch (err) {
     console.log(err.message);
+    res.status(500).send("Server Error");
   }
 });
 
@@ -228,6 +232,7 @@ router.delete("/:id", async (req, res, next) => {
     res.status(204).send("Todo was deleted");
   } catch (err) {
     console.log(err.message);
+    res.status(500).send("Server Error");
   }
 });
 

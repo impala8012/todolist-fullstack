@@ -5,6 +5,7 @@ const cors = require("cors");
 const swaggerUI = require("swagger-ui-express")
 const swaggerJsDoc = require("swagger-jsdoc")
 const todoRouter = require("./routes/todo");
+const userRouter = require("./routes/user")
 
 // middleware
 app.use(cors());
@@ -33,6 +34,7 @@ const options = {
 const specs = swaggerJsDoc(options)
 app.use("/api-docs", swaggerUI.serve,swaggerUI.setup(specs))
 app.use("/todos", todoRouter);
+app.use("/autho", userRouter);
 
 app.listen(5000, () => {
   console.log("server has started listen on port 5000");
