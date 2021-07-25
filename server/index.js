@@ -34,7 +34,7 @@ const options = {
 const specs = swaggerJsDoc(options)
 app.use("/api-docs", swaggerUI.serve,swaggerUI.setup(specs))
 app.use("/todos", todoRouter);
-app.use("/autho", userRouter);
+app.use("/auth", userRouter);
 
 app.listen(5000, () => {
   console.log("server has started listen on port 5000");
