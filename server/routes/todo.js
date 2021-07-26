@@ -1,5 +1,7 @@
 const router = require("express").Router();
 const pool = require("../db");
+const authorization = require("../middleware/authorization")
+
 
 /**
  * @swagger
@@ -57,12 +59,12 @@ const pool = require("../db");
  */
 
 // Create a todo
-router.post("/", async (req, res, next) => {
+router.post("/", authorization, async (req, res, next) => {
   try {
     const { description, title } = req.body;
     const newTodo = await pool.query(
-      "INSERT INTO todo (description, title) VALUES($1,$2) RETURNING *",
-      [description, title]
+      "INSERT INTO todos (user_id, description, title) VALUES($1,$2, $3) RETURNING *",
+      [req.user.id,description, title]
     );
     res.status(201).json(newTodo.rows[0]);
   } catch (err) {
@@ -97,16 +99,38 @@ router.post("/", async (req, res, next) => {
  */
 
 // Get all todos
-router.get("/", async (req, res, next) => {
+router.get("/", authorization, async (req, res, next) => {
   try {
     const { title } = req.query;
     if (title) {
-      const todos = await pool.query("SELECT * FROM todo WHERE LOWER(title) LIKE LOWER($1)", [
+      const todos = await pool.query("SELECT * FROM todos WHERE LOWER(title) LIKE LOWER($1)", [
         `%${title}%`,
       ]);
       res.status(200).json(todos.rows);
     } else {
-      const allTodos = await pool.query("SELECT * FROM todo");
+      // req.user has the payload
+      const userTodos = await pool.query(
+        "SELECT u.user_name, t.todo_id, t.description, t.title FROM users AS U LEFT JOIN todos AS t ON u.user_ud = t.user_id WHERE u.user_id = $1",
+        [req.user.id]
+      );
+      res.status(200).json(userTodos.rows);
+    }
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+router.get("/", async (req, res, next) => {
+  try {
+    const { title } = req.query;
+    if (title) {
+      const todos = await pool.query("SELECT * FROM todos WHERE LOWER(title) LIKE LOWER($1)", [
+        `%${title}%`,
+      ]);
+      res.status(200).json(todos.rows);
+    } else {
+      const allTodos = await pool.query("SELECT * FROM todos");
       res.status(200).json(allTodos.rows);
     }
   } catch (err) {
@@ -142,7 +166,7 @@ router.get("/", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
-    const todo = await pool.query("SELECT * FROM todo WHERE todo_id = $1", [
+    const todo = await pool.query("SELECT * FROM todos WHERE todo_id = $1", [
       id,
     ]);
     res.status(200).json(todo.rows);
@@ -185,16 +209,19 @@ router.get("/:id", async (req, res, next) => {
  */
 
 // update a todo
-router.put("/:id", async (req, res, next) => {
+router.put("/:id", authorization, async (req, res, next) => {
   try {
     const { id } = req.params;
     const { description, title } = req.body;
     console.log("description", description);
     console.log("title", title);
     const updateTodo = await pool.query(
-      "UPDATE todo SET description = $1, title = $2 WHERE todo_id = $3",
-      [description, title, id]
+      "UPDATE todos SET description = $1, title = $2 WHERE todo_id = $3 AND user_id = $4",
+      [description, title, id, req.user.id]
     );
+    if(updateTodo.rows.length === 0) {
+      return res.json("You don't have the right to get this todo")
+    }
     res.status(204).send("Todo was updated");
   } catch (err) {
     console.log(err.message);
@@ -226,9 +253,12 @@ router.delete("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
     const deletedTodo = await pool.query(
-      "DELETE FROM todo WHERE todo_id = $1",
-      [id]
+      "DELETE FROM todos WHERE todo_id = $1 AND user_id = $2",
+      [id, req.user.id]
     );
+    if(deletedTodo.rows.length === 0) {
+      return res.json("This todo is not yours")
+    }
     res.status(204).send("Todo was deleted");
   } catch (err) {
     console.log(err.message);

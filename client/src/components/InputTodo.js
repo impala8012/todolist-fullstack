@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import styled from "styled-components";
 import { ButtonStyle as Button } from "./ButtonStyle";
+import ListTodo from "./ListTodo";
 
 const InputTodoContainer = styled.div`
   text-align: center;
@@ -52,26 +53,29 @@ const InputTodo = () => {
     }
   };
   return (
-    <InputTodoContainer>
-      <h1 className="text-center">Todo List</h1>
-      <Form className="flex" onSubmit={handleSubmit}>
-        <label htmlFor="title">Title: </label>
-        <input
-          type="text"
-          name="title"
-          value={title}
-          onChange={handleTitleChange}
-        />
-        <label htmlFor="description">Description: </label>
-        <input
-          type="text"
-          name="description"
-          value={description}
-          onChange={handleDescriptionChange}
-        />
-        <Button>Add</Button>
-      </Form>
-    </InputTodoContainer>
+    <Fragment>
+      <InputTodoContainer>
+        <h1 className="text-center">Todo List</h1>
+        <Form className="flex" onSubmit={handleSubmit}>
+          <label htmlFor="title">Title: </label>
+          <input
+            type="text"
+            name="title"
+            value={title}
+            onChange={handleTitleChange}
+          />
+          <label htmlFor="description">Description: </label>
+          <input
+            type="text"
+            name="description"
+            value={description}
+            onChange={handleDescriptionChange}
+          />
+          <Button>Add</Button>
+        </Form>
+      </InputTodoContainer>
+      <ListTodo />
+    </Fragment>
   );
 };
 

@@ -1,19 +1,21 @@
 import React from "react";
-import styled,{css} from "styled-components";
-import{GlobalStyle} from "../theme"
+import styled, { css } from "styled-components";
+import { GlobalStyle } from "../theme";
+import { Link, useLocation, useHistory } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const HeaderContainer = styled.div`
   border-bottom: 1px solid black;
   padding: 1rem;
 `;
 
+const Nav = styled(Link)`
+  margin-left: 10px;
+`;
+
 const UserContainer = styled.div`
   display: flex;
   justify-content: flex-end;
-
-  div+div {
-    margin-left: 10px;
-  }
 `;
 
 const SwitchContainer = styled.div`
@@ -22,8 +24,8 @@ const SwitchContainer = styled.div`
   align-items: center;
 `;
 
-const SunColor = styled.span`  
-  color: ${({darkMode}) => darkMode ? "gray" : "yellow"};
+const SunColor = styled.span`
+  color: ${({ darkMode }) => (darkMode ? "gray" : "yellow")};
 `;
 
 const MoonColor = styled.span`
@@ -92,9 +94,15 @@ const Switch = styled.label`
   }
 `;
 
-const Header = ({ darkMode, setDarkMode }) => {
-  const themetoggler = () => {
-    darkMode ? setDarkMode(false) : setDarkMode(true);
+const Header = ({ darkMode, setDarkMode, setAuth }) => {
+  const location = useLocation();
+  const history = useHistory();
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    localStorage.removeItem("token");
+    setAuth(false);
+    toast.success("Logout successfully");
   };
   return (
     <HeaderContainer>
@@ -110,12 +118,13 @@ const Header = ({ darkMode, setDarkMode }) => {
           </div>
           <MoonColor darkMode={darkMode}>☽</MoonColor>
         </SwitchContainer>
-        <div>
-          <button onClick={themetoggler}>Dark Mode</button>
-        </div>
-        <div>Login</div>
-        <div>Register</div>
-        <div>Logout</div>
+        <Nav $active={location.pathname === "/login"} to="/login">
+          Login
+        </Nav>
+        <Nav $active={location.pathname === "/register"} to="/register">
+          Register
+        </Nav>
+        <Nav onClick={handleLogout}>Logout</Nav>
       </UserContainer>
     </HeaderContainer>
   );

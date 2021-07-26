@@ -17,9 +17,7 @@ const Item = styled.div`
   border: 1px solid #ccc;
   transform: translateY(0px);
   transition: 0.5s;
-  color: ${props => props.theme.fontColor}
-
-  h2 {
+  color: ${(props) => props.theme.fontColor} h2 {
     border-bottom: 1px solid #888;
     padding-bottom: 0.3em;
     margin-bottom: 0.4em;
@@ -106,7 +104,10 @@ const ListTodo = () => {
 
   const getTodos = async () => {
     try {
-      const response = await fetch("http://localhost:5000/todos");
+      const response = await fetch("http://localhost:5000/auth/dashboard", {
+        method: "GET",
+        headers: { token: localStorage.token },
+      });
       const jsonData = await response.json();
       setTodos(jsonData);
     } catch (err) {
@@ -158,6 +159,7 @@ const ListTodo = () => {
         </form>
       </SearchContainer>
       <WrapContainer>
+        {console.log("filter todos", todos)}
         {todos
           .filter((todo) => {
             if (searchTerm === "") {
