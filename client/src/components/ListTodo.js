@@ -98,31 +98,31 @@ const Button = styled(ButtonStyle)`
     color: green;
   }
 `;
-const ListTodo = () => {
+const ListTodo = ({ allTodos, setTodoChange }) => {
   const [todos, setTodos] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const getTodos = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/auth/dashboard", {
-        method: "GET",
-        headers: { token: localStorage.token },
-      });
-      const jsonData = await response.json();
-      setTodos(jsonData);
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
+  // const getTodos = async () => {
+  //   try {
+  //     const response = await fetch("http://localhost:5000/home", {
+  //       method: "GET",
+  //       headers: { token: localStorage.token },
+  //     });
+  //     const jsonData = await response.json();
+  //     setTodos(jsonData);
+  //   } catch (err) {
+  //     console.log(err.message);
+  //   }
+  // };
 
   useEffect(() => {
-    getTodos();
-  }, [searchTerm]);
+    setTodos(allTodos);
+  }, [allTodos]);
 
   const handleDelete = async (id) => {
     console.log("id", id);
     try {
-      await fetch(`http://localhost:5000/todos/${id}`, {
+      await fetch(`http://localhost:5000/home/todos/${id}`, {
         method: "DELETE",
       });
       setTodos(todos.filter((todo) => todo.todo_id !== id));
@@ -160,7 +160,7 @@ const ListTodo = () => {
       </SearchContainer>
       <WrapContainer>
         {console.log("filter todos", todos)}
-        {todos
+        {todos.length !== 0 && todos[0].todo_id !== null && todos
           .filter((todo) => {
             if (searchTerm === "") {
               return todo;
@@ -175,7 +175,7 @@ const ListTodo = () => {
               <div className="text">
                 <h2>{todo.title}</h2>
                 <p>{todo.description}</p>
-                <EditTodo todo={todo} />
+                <EditTodo todo={todo} setTodoChange={setTodoChange} />
                 <Button onClick={() => handleDelete(todo.todo_id)}>
                   Delete
                 </Button>

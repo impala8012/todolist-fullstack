@@ -96,7 +96,6 @@ const Switch = styled.label`
 
 const Header = ({ darkMode, setDarkMode, setAuth }) => {
   const location = useLocation();
-  const history = useHistory();
 
   const handleLogout = (e) => {
     e.preventDefault();
@@ -118,6 +117,9 @@ const Header = ({ darkMode, setDarkMode, setAuth }) => {
           </div>
           <MoonColor darkMode={darkMode}>☽</MoonColor>
         </SwitchContainer>
+        <Nav $active={location.pathname === "/home"} to="/home">
+          Home
+        </Nav>
         <Nav $active={location.pathname === "/login"} to="/login">
           Login
         </Nav>

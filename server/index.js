@@ -33,7 +33,7 @@ const options = {
 
 const specs = swaggerJsDoc(options)
 app.use("/api-docs", swaggerUI.serve,swaggerUI.setup(specs))
-app.use("/todos", todoRouter);
+app.use("/home", todoRouter);
 app.use("/auth", userRouter);
 
 app.listen(5000, () => {

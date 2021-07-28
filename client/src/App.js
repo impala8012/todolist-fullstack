@@ -6,11 +6,7 @@ import {
   Route,
   Redirect,
 } from "react-router-dom";
-import Dashboard from "./components/Dashboard";
-import LoginPage from "./components/LoginPage.js";
-import LandingPage from "./components/LandingPage.js";
-import RegisterPage from "./components/RegisterPage";
-import InputTodo from "./components/InputTodo";
+import { HomePage, LoginPage, LandingPage, RegisterPage } from "./pages";
 import Header from "./components/Header";
 import { ThemeProvider } from "styled-components";
 import { lightTheme, darkTheme, GlobalStyle } from "./theme";
@@ -28,15 +24,17 @@ function App() {
     darkMode ? setDarkMode(false) : setDarkMode(true);
   };
 
-  async function isAuth() {
+  const isAuth = async() => {
     try {
-      const response = await fetch("http://localhost:5000/is-auth", {
-        method: "GET",
+      const response = await fetch("http://localhost:5000/auth/verify", {
+        method: "POST",
         headers: { token: localStorage.token },
       });
       const parseResponse = await response.json();
-      console.log(parseResponse);
-      parseFloat === true ? setIsAuthenticate(true) : setIsAuthenticate(false);
+      console.log("is-Auth",parseResponse);
+      parseResponse === true
+        ? setIsAuthenticate(true)
+        : setIsAuthenticate(false);
     } catch (err) {
       console.log(err.message);
     }
@@ -57,11 +55,7 @@ function App() {
             setAuth={setAuth}
           />
           <Switch>
-            <Route
-              exact
-              path="/"
-              render={LandingPage}
-            ></Route>
+            <Route exact path="/" render={props=>!isAuthenticate ? (<LandingPage />) : <Redirect to="/home"/>}></Route>
             <Route
               exact
               path="/login"
@@ -69,7 +63,7 @@ function App() {
                 !isAuthenticate ? (
                   <LoginPage {...props} setAuth={setAuth} />
                 ) : (
-                  <Redirect to="/" />
+                  <Redirect to="/home" />
                 )
               }
             ></Route>
@@ -80,16 +74,16 @@ function App() {
                 !isAuthenticate ? (
                   <RegisterPage {...props} setAuth={setAuth} />
                 ) : (
-                  <Redirect to="/" />
+                  <Redirect to="/home" />
                 )
               }
             ></Route>
             <Route
               exact
-              path="/dashboard"
+              path="/home"
               render={(props) =>
                 isAuthenticate ? (
-                  <InputTodo {...props} setAuth={setAuth} />
+                  <HomePage {...props} setAuth={setAuth} />
                 ) : (
                   <Redirect to="/login" />
                 )

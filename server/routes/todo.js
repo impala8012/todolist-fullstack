@@ -59,7 +59,7 @@ const authorization = require("../middleware/authorization")
  */
 
 // Create a todo
-router.post("/", authorization, async (req, res, next) => {
+router.post("/todos", authorization, async (req, res, next) => {
   try {
     const { description, title } = req.body;
     const newTodo = await pool.query(
@@ -103,14 +103,15 @@ router.get("/", authorization, async (req, res, next) => {
   try {
     const { title } = req.query;
     if (title) {
-      const todos = await pool.query("SELECT * FROM todos WHERE LOWER(title) LIKE LOWER($1)", [
-        `%${title}%`,
-      ]);
+      const todos = await pool.query(
+        "SELECT * FROM todos WHERE LOWER(title) LIKE LOWER($1) ORDER BY todo_id ASC",
+        [`%${title}%`]
+      );
       res.status(200).json(todos.rows);
     } else {
       // req.user has the payload
       const userTodos = await pool.query(
-        "SELECT u.user_name, t.todo_id, t.description, t.title FROM users AS U LEFT JOIN todos AS t ON u.user_ud = t.user_id WHERE u.user_id = $1",
+        "SELECT u.user_name, t.todo_id, t.description, t.title FROM users AS U LEFT JOIN todos AS t ON u.user_id = t.user_id WHERE u.user_id = $1 ORDER BY todo_id ASC",
         [req.user.id]
       );
       res.status(200).json(userTodos.rows);
@@ -121,23 +122,23 @@ router.get("/", authorization, async (req, res, next) => {
   }
 });
 
-router.get("/", async (req, res, next) => {
-  try {
-    const { title } = req.query;
-    if (title) {
-      const todos = await pool.query("SELECT * FROM todos WHERE LOWER(title) LIKE LOWER($1)", [
-        `%${title}%`,
-      ]);
-      res.status(200).json(todos.rows);
-    } else {
-      const allTodos = await pool.query("SELECT * FROM todos");
-      res.status(200).json(allTodos.rows);
-    }
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).send("Server Error");
-  }
-});
+// router.get("/", async (req, res, next) => {
+//   try {
+//     const { title } = req.query;
+//     if (title) {
+//       const todos = await pool.query("SELECT * FROM todos WHERE LOWER(title) LIKE LOWER($1)", [
+//         `%${title}%`,
+//       ]);
+//       res.status(200).json(todos.rows);
+//     } else {
+//       const allTodos = await pool.query("SELECT * FROM todos");
+//       res.status(200).json(allTodos.rows);
+//     }
+//   } catch (err) {
+//     console.log(err.message);
+//     res.status(500).send("Server Error");
+//   }
+// });
 
 /**
  * @swagger
@@ -163,7 +164,7 @@ router.get("/", async (req, res, next) => {
  *                  description: Todo was not found
  */
 // Get a todo
-router.get("/:id", async (req, res, next) => {
+router.get("/todos/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
     const todo = await pool.query("SELECT * FROM todos WHERE todo_id = $1", [
@@ -209,7 +210,7 @@ router.get("/:id", async (req, res, next) => {
  */
 
 // update a todo
-router.put("/:id", authorization, async (req, res, next) => {
+router.put("/todos/:id", authorization, async (req, res, next) => {
   try {
     const { id } = req.params;
     const { description, title } = req.body;
@@ -249,7 +250,7 @@ router.put("/:id", authorization, async (req, res, next) => {
  *                  description: Todo was not found
  */
 // delete a todo
-router.delete("/:id", async (req, res, next) => {
+router.delete("/todos/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
     const deletedTodo = await pool.query(

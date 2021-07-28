@@ -24,7 +24,7 @@ const ButtonContainer = styled.div`
   justify-content: center;
 `;
 
-const EditTodo = ({ todo }) => {
+const EditTodo = ({ todo, setTodoChange }) => {
   const [description, setDescription] = useState(todo.description);
   const [title, setTitle] = useState(todo.title);
   const [displayModal, setDisplayModal] = useState(false);
@@ -49,13 +49,18 @@ const EditTodo = ({ todo }) => {
   const handleEdit = async (e) => {
     e.preventDefault();
     try {
-      const body = { description,title };
-      await fetch(`http://localhost:5000/todos/${todo.todo_id}`, {
+      const body = { description, title };
+      await fetch(`http://localhost:5000/home/todos/${todo.todo_id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          token: localStorage.token,
+        },
         body: JSON.stringify(body),
       });
-      window.location = "/";
+      setTodoChange(true)
+      setDisplayModal(!displayModal)
+      // window.location = "/";
     } catch (err) {
       console.log(err.message);
     }
@@ -85,7 +90,7 @@ const EditTodo = ({ todo }) => {
           />
         </ModalWrapped>
         <ButtonContainer>
-          <Button onClick={handleEdit}>Edit</Button>
+          <Button onClick={(e)=>handleEdit(e)}>Edit</Button>
           <Button onClick={hideModal}>Close</Button>
         </ButtonContainer>
       </Modal>
