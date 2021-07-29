@@ -250,11 +250,11 @@ router.put("/todos/:id", authorization, async (req, res, next) => {
  *                  description: Todo was not found
  */
 // delete a todo
-router.delete("/todos/:id", async (req, res, next) => {
+router.delete("/todos/:id", authorization, async (req, res, next) => {
   try {
     const { id } = req.params;
     const deletedTodo = await pool.query(
-      "DELETE FROM todos WHERE todo_id = $1 AND user_id = $2",
+      "DELETE FROM todos WHERE todo_id = $1 AND user_id = $2 RETURNING *",
       [id, req.user.id]
     );
     if(deletedTodo.rows.length === 0) {

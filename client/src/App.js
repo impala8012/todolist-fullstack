@@ -16,6 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [isAuthenticate, setIsAuthenticate] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const setAuth = (boolean) => {
     setIsAuthenticate(boolean);
@@ -48,14 +49,24 @@ function App() {
       <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
         <GlobalStyle />
         <Router>
+          <ToastContainer />
           <Header
             themetoggler={themetoggler}
             darkMode={darkMode}
             setDarkMode={setDarkMode}
             setAuth={setAuth}
+            isAuthenticate={isAuthenticate}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
           />
           <Switch>
-            <Route exact path="/" render={props=>!isAuthenticate ? (<LandingPage />) : <Redirect to="/home"/>}></Route>
+            <Route
+              exact
+              path="/"
+              render={(props) =>
+                !isAuthenticate ? <LandingPage /> : <Redirect to="/home" />
+              }
+            ></Route>
             <Route
               exact
               path="/login"

@@ -1,7 +1,6 @@
 import React, { Fragment, useState } from "react";
 import styled, { css } from "styled-components";
 import { ButtonStyle as Button } from "./ButtonStyle";
-import ListTodo from "./ListTodo";
 
 const InputTodoContainer = styled.div`
   text-align: center;
@@ -51,29 +50,18 @@ const InputContainer = styled.input`
   }
 `;
 
-const InputLabel = styled.label`
-  color: grey;
-  font-size: 16px;
-  font-weight: normal;
-  position: absolute;
-  pointer-events: none;
-  top: 10px;
-  transition: 300ms ease all;
-
-  &:hover {
-    ${shrinkLabelStyles}
-  }
-`;
 
 const InputTodo = ({ setTodoChange }) => {
-  const [description, setDescription] = useState("");
-  const [title, setTitle] = useState("");
-  const handleDescriptionChange = (e) => {
-    setDescription(e.target.value);
-  };
-  const handleTitleChange = (e) => {
-    setTitle(e.target.value);
-  };
+  const [inputs, setInputs] = useState({
+    title: "",
+    description: ""
+  })
+  
+  const {title, description} = inputs
+  const handleChange = (e) => {
+    setInputs({...inputs, [e.target.name]: e.target.value})
+  }
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -90,8 +78,7 @@ const InputTodo = ({ setTodoChange }) => {
         body: JSON.stringify(body),
       });
       // refresh and show the home page
-      setDescription("");
-      setTitle("");
+      setInputs({ title: "", description: "" });
       setTodoChange(true);
       // window.location = "/";
     } catch (err) {
@@ -101,21 +88,21 @@ const InputTodo = ({ setTodoChange }) => {
   return (
     <Fragment>
       <InputTodoContainer>
-        <h1 className="text-center">Todo List</h1>
+        <h1 className="text-center">My Daily Todo</h1>
         <Form className="flex" onSubmit={handleSubmit}>
           <InputContainer
             type="text"
             name="title"
             value={title}
             placeholder="Title"
-            onChange={handleTitleChange}
+            onChange={handleChange}
           ></InputContainer>
           <InputContainer
             type="text"
             name="description"
             value={description}
             placeholder="Description"
-            onChange={handleDescriptionChange}
+            onChange={handleChange}
           ></InputContainer>
           <Button>Add</Button>
         </Form>

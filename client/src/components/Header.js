@@ -1,7 +1,7 @@
 import React from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { GlobalStyle } from "../theme";
-import { Link, useLocation, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const HeaderContainer = styled.div`
@@ -10,7 +10,9 @@ const HeaderContainer = styled.div`
 `;
 
 const Nav = styled(Link)`
-  margin-left: 10px;
+  margin-left: 15px;
+  display: inline-flex;
+  align-items: center;
 `;
 
 const UserContainer = styled.div`
@@ -94,8 +96,12 @@ const Switch = styled.label`
   }
 `;
 
-const Header = ({ darkMode, setDarkMode, setAuth }) => {
-  const location = useLocation();
+const NavContainer = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+const Header = ({ darkMode, setDarkMode, setAuth, isAuthenticate }) => {
 
   const handleLogout = (e) => {
     e.preventDefault();
@@ -117,16 +123,14 @@ const Header = ({ darkMode, setDarkMode, setAuth }) => {
           </div>
           <MoonColor darkMode={darkMode}>☽</MoonColor>
         </SwitchContainer>
-        <Nav $active={location.pathname === "/home"} to="/home">
-          Home
-        </Nav>
-        <Nav $active={location.pathname === "/login"} to="/login">
-          Login
-        </Nav>
-        <Nav $active={location.pathname === "/register"} to="/register">
-          Register
-        </Nav>
-        <Nav onClick={handleLogout}>Logout</Nav>
+        <Nav to="/">Home</Nav>
+        {isAuthenticate && <Nav onClick={handleLogout}>Logout</Nav>}
+        {!isAuthenticate && (
+          <NavContainer>
+            <Nav to="/login">Login</Nav>
+            <Nav to="/register">Register</Nav>
+          </NavContainer>
+        )}
       </UserContainer>
     </HeaderContainer>
   );

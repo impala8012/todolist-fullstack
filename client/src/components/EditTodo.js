@@ -25,10 +25,14 @@ const ButtonContainer = styled.div`
 `;
 
 const EditTodo = ({ todo, setTodoChange }) => {
-  const [description, setDescription] = useState(todo.description);
-  const [title, setTitle] = useState(todo.title);
+  const [inputs, setInputs] = useState({
+    title: todo.title,
+    description: todo.description
+  })
+  // const [description, setDescription] = useState(todo.description);
+  // const [title, setTitle] = useState(todo.title);
   const [displayModal, setDisplayModal] = useState(false);
-
+  const {title, description} = inputs
   const openModal = () => {
     setDisplayModal(true);
     console.log("I am triggered");
@@ -36,16 +40,21 @@ const EditTodo = ({ todo, setTodoChange }) => {
   };
   const hideModal = () => {
     setDisplayModal(false);
-    setDescription(todo.description);
-    setTitle(todo.title);
-  };
-  const handleTitleChange = (e) => {
-    setTitle(e.target.value);
+    // setDescription(todo.description);
+    // setTitle(todo.title);
+    setInputs({ title: todo.title, description: todo.description });
   };
 
-  const handleDescriptionChange = (e) => {
-    setDescription(e.target.value);
-  };
+  const handleChange = e => {
+    setInputs({...inputs, [e.target.name]: e.target.value})
+  }
+  // const handleTitleChange = (e) => {
+  //   setTitle(e.target.value);
+  // };
+
+  // const handleDescriptionChange = (e) => {
+  //   setDescription(e.target.value);
+  // };
   const handleEdit = async (e) => {
     e.preventDefault();
     try {
@@ -79,18 +88,18 @@ const EditTodo = ({ todo, setTodoChange }) => {
             type="text"
             name="title"
             value={title}
-            onChange={handleTitleChange}
+            onChange={handleChange}
           />
           <label htmlFor="description">Description</label>
           <input
             type="text"
             name="description"
             value={description}
-            onChange={handleDescriptionChange}
+            onChange={handleChange}
           />
         </ModalWrapped>
         <ButtonContainer>
-          <Button onClick={(e)=>handleEdit(e)}>Edit</Button>
+          <Button onClick={(e) => handleEdit(e)}>Edit</Button>
           <Button onClick={hideModal}>Close</Button>
         </ButtonContainer>
       </Modal>

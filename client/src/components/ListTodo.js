@@ -2,6 +2,7 @@ import React, { Fragment, useState, useEffect } from "react";
 import EditTodo from "./EditTodo";
 import styled from "styled-components";
 import { ButtonStyle } from "./ButtonStyle";
+import SearchInput from "./SearchInput";
 const WrapContainer = styled.div`
   width: 1200px;
   display: flex;
@@ -57,41 +58,6 @@ const Item = styled.div`
   }
 `;
 
-const SearchContainer = styled.div`
-  width: 30%;
-  margin: auto;
-  padding: 1rem;
-
-  form {
-    display: flex;
-  }
-
-  input {
-    width: 100%;
-    border: 3px solid #00b4cc;
-    border-right: none;
-    padding: 5px;
-    height: 20px;
-    border-radius: 5px 0 0 5px;
-    outline: none;
-    color: #9dbfaf;
-  }
-  input:focus {
-    color: #00b4cc;
-  }
-
-  button {
-    width: 40px;
-    height: 36px;
-    border: 1px solid #00b4cc;
-    background: #00b4cc;
-    text-align: center;
-    color: #fff;
-    border-radius: 0 5px 5px 0;
-    cursor: pointer;
-    font-size: 20px;
-  }
-`;
 
 const Button = styled(ButtonStyle)`
   &:hover {
@@ -124,64 +90,42 @@ const ListTodo = ({ allTodos, setTodoChange }) => {
     try {
       await fetch(`http://localhost:5000/home/todos/${id}`, {
         method: "DELETE",
+        headers: {token : localStorage.token}
       });
       setTodos(todos.filter((todo) => todo.todo_id !== id));
     } catch (err) {
       console.log(err.message);
     }
   };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(
-        `http://localhost:5000/todos?title=${searchTerm}`
-      );
-      const jsonData = await response.json();
-      setTodos(jsonData);
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
   return (
     <Fragment>
-      <SearchContainer>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search.."
-            value={searchTerm}
-          />
-          <button>
-            <i class="fa fa-search"></i>
-          </button>
-        </form>
-      </SearchContainer>
+      <SearchInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} setTodos={setTodos} />
       <WrapContainer>
         {console.log("filter todos", todos)}
-        {todos.length !== 0 && todos[0].todo_id !== null && todos
-          .filter((todo) => {
-            if (searchTerm === "") {
-              return todo;
-            } else if (
-              todo.title.toLowerCase().includes(searchTerm.toLowerCase())
-            ) {
-              return todo;
-            }
-          })
-          .map((todo) => (
-            <Item key={todo.todo_id}>
-              <div className="text">
-                <h2>{todo.title}</h2>
-                <p>{todo.description}</p>
-                <EditTodo todo={todo} setTodoChange={setTodoChange} />
-                <Button onClick={() => handleDelete(todo.todo_id)}>
-                  Delete
-                </Button>
-              </div>
-            </Item>
-          ))}
+        {todos.length !== 0 &&
+          todos[0].todo_id !== null &&
+          todos
+            .filter((todo) => {
+              if (searchTerm === "") {
+                return todo;
+              } else if (
+                todo.title.toLowerCase().includes(searchTerm.toLowerCase())
+              ) {
+                return todo;
+              }
+            })
+            .map((todo) => (
+              <Item key={todo.todo_id}>
+                <div className="text">
+                  <h2>{todo.title}</h2>
+                  <p>{todo.description}</p>
+                  <EditTodo todo={todo} setTodoChange={setTodoChange} />
+                  <Button onClick={() => handleDelete(todo.todo_id)}>
+                    Delete
+                  </Button>
+                </div>
+              </Item>
+            ))}
       </WrapContainer>
     </Fragment>
   );
