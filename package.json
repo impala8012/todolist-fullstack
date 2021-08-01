@@ -1,6 +1,9 @@
 {
   "name": "todolist",
   "version": "1.0.0",
+  "engines": {
+    "node": "12.18.4"
+  },
   "description": "fullstack pratice by using todo list",
   "main": "index.js",
   "scripts": {
