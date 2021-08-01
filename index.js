@@ -44,7 +44,7 @@ app.use("/home", todoRouter);
 app.use("/auth", userRouter);
 // in case they go to outside of the routes
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname,"client/build/index.html"))
+  res.sendFile(path.join(__dirname, "client/build/index.html"));
 })
 
 app.listen(port, () => {
