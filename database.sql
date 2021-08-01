@@ -1,4 +1,4 @@
-CREATE DATABASE todolist;
+-- CREATE DATABASE todolist;
 
 CREATE EXTENSION "uuid-ossp";
 
