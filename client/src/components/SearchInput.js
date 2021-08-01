@@ -38,7 +38,7 @@ const SearchInput = ({ searchTerm, setSearchTerm, setTodos }) => {
     e.preventDefault();
     try {
       const response = await fetch(
-        `http://localhost:5000/todos?title=${searchTerm}`
+        `/todos?title=${searchTerm}`
       );
       const jsonData = await response.json();
       setTodos(jsonData);

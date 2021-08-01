@@ -88,7 +88,7 @@ const ListTodo = ({ allTodos, setTodoChange }) => {
   const handleDelete = async (id) => {
     console.log("id", id);
     try {
-      await fetch(`http://localhost:5000/home/todos/${id}`, {
+      await fetch(`/home/todos/${id}`, {
         method: "DELETE",
         headers: {token : localStorage.token}
       });

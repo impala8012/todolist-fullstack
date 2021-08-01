@@ -69,7 +69,7 @@ const InputTodo = ({ setTodoChange }) => {
       const body = { description, title };
       console.log(body);
       if (!description || !title) return;
-      await fetch("http://localhost:5000/home/todos", {
+      await fetch("/home/todos", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -10,7 +10,7 @@ import { HomePage, LoginPage, LandingPage, RegisterPage } from "./pages";
 import Header from "./components/Header";
 import { ThemeProvider } from "styled-components";
 import { lightTheme, darkTheme, GlobalStyle } from "./theme";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
@@ -27,7 +27,7 @@ function App() {
 
   const isAuth = async() => {
     try {
-      const response = await fetch("http://localhost:5000/auth/verify", {
+      const response = await fetch("/auth/verify", {
         method: "POST",
         headers: { token: localStorage.token },
       });
