@@ -8,7 +8,7 @@ const Pool = require("pg").Pool;
 //   database: process.env.DB_NAME,
 // }
 
-const devConfig = `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
+const devConfig = `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
 
 // heroku addon
 const proConfig = process.env.DATABASE_URL;
