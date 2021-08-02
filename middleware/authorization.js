@@ -15,6 +15,6 @@ module.exports = (req, res, next) => {
     next();
   } catch (err) {
     console.log(err.message);
-    return res.status(401).json({ msg: "Not Authorize" });
+    res.status(401).json({ msg: "Not Authorize" });
   }
 };
