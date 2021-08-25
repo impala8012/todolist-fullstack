@@ -68,7 +68,7 @@ const ListTodo = ({ allTodos, setTodoChange }) => {
   const [todos, setTodos] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // const getTodos = async () => {
+  //  const getTodos = async () => {
   //   try {
   //     const response = await fetch("http://localhost:5000/home", {
   //       method: "GET",

@@ -21,25 +21,25 @@ if(process.env.NODE_ENV === "production") {
 }
 
 
-const options = {
-  definition: {
-    openapi: "3.0.0",
-    info: {
-      title: "todo API",
-      version: "1.0.0",
-      description: "A todo list express API",
-    },
-    servers: [
-      {
-        url: "http://localhost:5000",
-      },
-    ],
-  },
-  apis: ["./routes/*.js"],
-};
+// const options = {
+//   definition: {
+//     openapi: "3.0.0",
+//     info: {
+//       title: "todo API",
+//       version: "1.0.0",
+//       description: "A todo list express API",
+//     },
+//     servers: [
+//       {
+//         url: "http://localhost:5000",
+//       },
+//     ],
+//   },
+//   apis: ["./routes/*.js"],
+// };
 
 const specs = swaggerJsDoc(options)
-app.use("/api-docs", swaggerUI.serve,swaggerUI.setup(specs))
+// app.use("/api-docs", swaggerUI.serve,swaggerUI.setup(specs))
 app.use("/home", todoRouter);
 app.use("/auth", userRouter);
 // in case they go to outside of the routes
