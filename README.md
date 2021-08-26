@@ -1,5 +1,6 @@
 # FullSatck Todo App
 [連結](https://fullstack-todoapp-pern.herokuapp.com/)
+
 每個程式新手都會第一個做的 Web 小作品，利用 React Node.js Express 以及 Postgres 做出一個涵蓋前後端的 Todo App，並部署於 heroku 上。
 讓每位使用者可以有自己專屬的 todo list，並提供夜間模式增加使用者體驗。
 
@@ -30,5 +31,7 @@ bcrypt ： 將使用者密碼雜湊之後存進資料庫。
 Postgres ： 利用 SQL 語法，與 server 端串接出資料庫間 CRUD 的操作
 
 資料庫設計
+
 [連結](https://dbdiagram.io/d/612664e56dc2bb6073bb3d91)
+
 ![](https://i.imgur.com/fJHkDlu.png)
