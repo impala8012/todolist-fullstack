@@ -20,15 +20,22 @@
 ### 前端技術
 ----
 React：利用 Hooks 形式的 function component 來完成版面
+
 react-router-dom：處理前端路由
+
 Styled-components：將 CSS component 化的形式來做版面配置
+
 
 ### 後端技術
 ------
 Node/Express ： 串接 API 以及 CRUD 的操作，實作出處理會員認證註冊與登入程序。
+
 jsonwebtoken ： 簽署 token 實作使用者身分驗證，確保資料不會被任意串改。
+
 bcrypt ： 將使用者密碼雜湊之後存進資料庫。
+
 Postgres ： 利用 SQL 語法，與 server 端串接出資料庫間 CRUD 的操作
+
 
 資料庫設計
 
